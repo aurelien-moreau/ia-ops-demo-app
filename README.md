@@ -37,4 +37,4 @@ Poussée automatiquement sur Docker Hub à chaque push sur `main` via GitHub Act
 
 ## Repo GitOps associé
 
-Les manifests Kubernetes sont dans : https://github.com/aurelops/demo-ia-ops
+Les manifests Kubernetes sont dans : https://github.com/aurelien-moreau/ia-ops-argo-app
