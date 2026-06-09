@@ -14,7 +14,7 @@ Auto-refresh toutes les 3 secondes. Endpoint `/health` retourne 200/503.
 ## Image Docker
 
 ```
-docker pull aurelops/demo-app:latest
+docker pull aurelops/ia-ops-demo-app:latest
 ```
 
 Poussée automatiquement sur Docker Hub à chaque push sur `main` via GitHub Actions.
