@@ -100,7 +100,11 @@ func holdConnections() {
 	defer heldMu.Unlock()
 
 	for i := 0; i < dbPoolSize; i++ {
-		conn, err := pool.Conn(context.Background())
+		// Short timeout so a non-listening postgres (SYN drop) fails fast
+		// instead of blocking for the OS TCP retransmit timeout (~2 min).
+		connCtx, connCancel := context.WithTimeout(context.Background(), 5*time.Second)
+		conn, err := pool.Conn(connCtx)
+		connCancel()
 		if err != nil {
 			errStr := err.Error()
 			state.mu.Lock()
@@ -246,9 +250,11 @@ func main() {
 		holdConnections()
 	}
 
-	// Periodically verify connections are alive and reconnect if needed
+	// Periodically verify connections are alive and reconnect if needed.
+	// 3s interval: after a postgres restart ArgoCD takes ~10-15s to redeploy,
+	// so we detect and reconnect within 3s of postgres being ready again.
 	go func() {
-		t := time.NewTicker(15 * time.Second)
+		t := time.NewTicker(3 * time.Second)
 		for range t.C {
 			checkAlive()
 		}
